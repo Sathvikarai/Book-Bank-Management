@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Bank Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <style>
+        /* Make the body a flex container to center content */
+        body {
+            background-image: url('https://i.pinimg.com/736x/3c/34/f8/3c34f81fa512152e0e5ca07f04b5cde9.jpg'); /* Replace with your image URL */
+            background-size: cover;  /* Ensure the image covers the entire page */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            margin: 0; /* Remove default body margin */
+            display: flex; /* Enable flexbox layout */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Make sure body takes full viewport height */
+        }
+
+        /* Container styles */
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 15px;
+            font-family: Arial, sans-serif;
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background for readability */
+            border-radius: 10px; /* Optional: Rounded corners for the container */
+            width: 100%; /* Allow container to take full width up to max-width */
+            box-sizing: border-box; /* Include padding in the width calculation */
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.visible {
+            display: block;
+        }
+
+        .quote {
+            font-style: italic;
+            color: gray;
+        }
+
+        .welcome-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .welcome-button-container button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .welcome-button-container button:hover {
+            background-color: #45a049;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"],
+        select {
+            width: 95%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        
+        /* Add gap between buttons in the profile section */
+#profileSection button {
+    margin-bottom: 10px; /* Add margin to create space between buttons */
+}
+
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .toggle-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            color: #4CAF50;
+        }
+
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
+
+        table {
+            width: 100%; /* Increase the width */
+            
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th, td {
+           
+            padding: 10px;
+        }
+
+        #bookTable th {
+            background-color: #f4f4f4;
+        }
+
+        /* Read Book Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 600px;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+}
+
+.chatbot-container {
+    display: none;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    width: 300px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+.chatbot-header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chatbot-messages {
+    height: 200px;
+    overflow-y: auto;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.chatbot-input {
+    display: flex;
+    padding: 10px;
+    gap: 5px;
+}
+
+.chatbot-input input {
+    .chatbot-input input {
+    flex: 1 !important;
+    padding: 20px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 5px !important;
+    color: black !important; /* Ensure visible text */
+    background-color: white !important; /* Ensure contrasting background */
+    font-size: 14px !important;
+    z-index: 10 !important; /* Ensure it's above other elements */
+    opacity: 1 !important; /* Fully visible */
+}
+
+}
+
+.chatbot-input button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;    
+}
+/* Position the profile menu (three dots) at the top right */
+.profile-menu {
+    position: absolute;
+    top: 10px;  /* Adjust to move the three dots button down */
+    right: 10px; /* Align to the right */
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none; /* Hide the dropdown menu by default */
+    position: absolute;
+    top: 30px; /* Adjust the dropdown menu position */
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    border-radius: 5px;
+}
+
+.dropdown-menu button {
+    padding: 10px;
+    width: 150px;
+    border: none;
+    background-color: white;
+    text-align: left;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.dropdown-menu button:hover {
+    background-color: #f1f1f1;
+}
+
+.profile-menu button {
+    font-size: 20px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.profile-menu button:hover {
+    color: #4CAF50; /* Change color on hover */
+}
+#editProfileSection button {
+    margin-bottom: 10px; /* Space between "Save Changes" and "Cancel" buttons */
+}
+#editProfileSection button:last-child {
+    margin-top: 10px; /* Space above the "Cancel" button */
+}
+#addBookSection button:first-child {
+    margin-bottom: 10px; /* Space between "Add Book" and "Cancel" buttons */
+}
+
+#addBookSection button:last-child {
+    margin-top: 10px; /* Space above the "Cancel" button */
+}
+/* Add full-screen styles */
+#bookListSection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: none;
+    z-index: 100;
+    overflow-y: auto;
+    background-color: rgba(255, 255, 255, 2);  /* Semi-transparent white background for content */
+    background-image: url('https://i.pinimg.com/736x/3c/34/f8/3c34f81fa512152e0e5ca07f04b5cde9.jpg'); /* Background image */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+}
+
+/* Ensure the book list table stays visible */
+#bookListTable {
+    width: 90%; /* Take most of the screen width */
+    margin: 20px auto; /* Center the table */
+    border-collapse: collapse;
+    position: relative; /* Ensure table is positioned above the transparent background */
+    z-index: 10; /* Ensure the table is above the background */
+}
+
+#bookListTable th, #bookListTable td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+#bookListTable th {
+    background-color: #f4f4f4;
+}
+
+#bookListTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Button styles */
+#bookListSection button {
+    width:auto;
+    padding: 5px 10px;  /* Reduce padding to make the button smaller */
+    font-size: 14px;     /* Decrease font size */
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#bookListSection button:hover {
+    background-color: #218838;
+}
+/* Flex container for search and category dropdown */
+.search-container {
+    display: flex;
+    align-items: center; /* Vertically center the items */
+    gap: 10px; /* Space between search input and category dropdown */
+    margin-bottom: 20px; /* Optional: Add some space below */
+}
+
+#searchInput {
+    width: 200px; /* Adjust the width of the search input box */
+    padding: 8px;
+}
+
+.category-label {
+    margin-right: 5px; /* Add space between the label and dropdown */
+}
+
+#categoryFilter {
+    width: 150px; /* Set the width of the category dropdown */
+    padding: 8px;
+}
+
+#searchButton {
+    padding: 8px 15px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#searchButton:hover {
+    background-color: #45a049;
+}
+
+
+
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Welcome Page -->
+    <div id="welcomePage" class="section visible">
+        <h2 align="center">Welcome to Book Bank</h2>
+        <p class="quote", align="center">"Every book, at your Fingertips"</p>
+
+        <!-- Button with background image -->
+        <div class="welcome-button-container">
+            <button onclick="showRegisterPage()">Start</button>
+        </div>
+    </div>
+
+    <!-- Register Page -->
+    <div id="registerPage" class="section">
+        <h2>Register</h2>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <input type="password" id="registerPassword" placeholder="Password">
+        <input type="email" id="registerEmail" placeholder="Email">
+        <input type="tel" id="registerPhone" placeholder="Phone Number">
+        <button onclick="register()">Register</button>
+        <p id="registerMessage" style="color: green; display: none;">Registration successful! Please login.</p>
+        <span class="toggle-link" onclick="showLoginPage()">Already have an account? Go to Login</span>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="section">
+        <h2>Login to Book Bank</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="errorMessage" style="color: red; display: none;">Invalid login details!</p>
+        <span class="toggle-link" onclick="showRegisterPage()">Don't have an account? Register here</span>
+        <span class="toggle-link" onclick="showForgotPassword()">Forgot Password?</span>
+    </div>
+
+    <!-- Forgot Password Section -->
+    <!-- Forgot Password Section -->
+    <div id="forgotPasswordSection" class="section">
+        <h2>Forgot Password</h2>
+        <input type="text" id="forgotUsername" placeholder="Username">
+        <input type="email" id="forgotEmail" placeholder="Email">
+        <button onclick="resetPassword()">Reset Password</button>
+        <p id="resetMessage" style="color: green; display: none;"></p>
+        <span class="toggle-link" onclick="showLoginPage()">Back to Login</span>
+    </div>
+
+
+    <!-- Profile Section -->
+    <div id="profileSection" class="section">
+        <h2>Welcome, <span id="profileUsername"></span></h2>
+        <div class="profile-menu">
+            <button onclick="toggleMenu()">&#8230;</button>
+            <div id="profileMenu" class="dropdown-menu">
+                <button onclick="showEditProfileForm()">Edit Profile</button>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        
+        <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+        <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
+        <button onclick="showBookList()">View Available Books</button>
+        <button onclick="showAddBookSection()">Add a New Book</button>
+    </div>
+    <div id="editProfileSection" class="section">
+        <h2>Edit Profile</h2>
+        <input type="text" id="editUsername" placeholder="Username" disabled>
+        <input type="email" id="editEmail" placeholder="Email">
+        <input type="tel" id="editPhone" placeholder="Phone Number">
+        <button onclick="saveProfile()">Save Changes</button>
+        <button onclick="returnToProfile()">Cancel</button>
+        
+    </div>
+
+<!-- Book List Section -->
+<!-- Book List Section -->
+<div id="bookListSection" class="section">
+    <h2>Available Books</h2>
+    <div id="searchBar" class="search-container">
+        <input type="text" id="searchInput" placeholder="Search by Title or Author">
+        
+        <!-- Category Dropdown -->
+        <label for="categoryFilter" class="category-label">Category:</label>
+        <select id="categoryFilter">
+            <option value="">All</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Science">Science</option>
+            <option value="Technology">Technology</option>
+        </select>
+        
+        <button id="searchButton" onclick="searchBooks()">Search</button>
+    </div>
+    <div id="noBooksMessage" style="display:none; color: red; text-align: center;">
+        No books found matching your search.
+    </div>
+    
+    <table id="bookTable">
+        <thead>
+            <tr>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Copies</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="bookList"></tbody>
+    </table>
+    <button onclick="returnToProfile()">Back to Profile</button>
+</div>
+
+
+
+    <!-- Add Book Section -->
+    <div id="addBookSection" class="section">
+        <h2>Add a New Book</h2>
+        <input type="text" id="newBookTitle" placeholder="Book Title">
+        <input type="text" id="newBookAuthor" placeholder="Book Author">
+        <select id="newBookCategory">
+            <option value="" disabled selected>Select Book Category</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Science">Science</option>
+            <option value="Technology">Technology</option>
+        </select>
+        <input type="number" id="newBookCopies" placeholder="Number of Copies">
+        <button onclick="addBook()">Add Book</button>
+        <button onclick="returnToProfile()">Cancel</button>
+    </div>
+    <div id="chatbot" class="chatbot-container">
+        <div class="chatbot-header">
+            <h4>Chat with the Assistant</h4>
+            <button onclick="closeChatbot()">X</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages"></div>
+        <div class="chatbot-input">
+            <input type="text" id="chatbotInput" placeholder="Type your question..." />
+            <button onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+    
+    
+    
+ 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+<script src="script.js"></script> <!-- Linking to external JS file -->
+</body>
+</html>
+
